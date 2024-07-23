@@ -98,7 +98,7 @@ def set_token():
         except ValueError:
             print(disappointed_dad_error_msg)
             print()
-    get_user_token()
+    execute_token(token)
     return token
 
 def set_parameters():
@@ -135,8 +135,10 @@ def set_parameters():
             print()
     print('-'*50, "PARAMETERS SUCCESSFULLY INTIALIZED", '-'*50)
     print()
-    set_token()
-    get_user_token()
+    return num_photos_per_cycle, delay_increment, min_delay, max_delay_SDG
+    set_token() # how do i return the values of the varbiables that I set while also then having set_token() execute at the end?
+    # also how do i execute a command into the camera?
+    # also CAD files in SVN not working--should i know how LASSIE is assembled before actually trying to take it apart?
 
 def begin_data_collection():
     #collect_data(num_photos_per_cycle, delay_increment, min_delay, max_delay_SDG)
@@ -154,7 +156,6 @@ def begin_data_collection():
             print(disappointed_dad_error_msg) 
             print()
     set_token()
-    get_user_token()
 
 def save_profile(max_delay_SDG, min_delay, num_photos_per_cycle, delay_increment):
     try:
@@ -188,13 +189,11 @@ def save_profile(max_delay_SDG, min_delay, num_photos_per_cycle, delay_increment
             print(f'PROFILE "{profile_name}" SUCCESSFULLY SAVED')
             print('-'*50)
             set_token()
-            get_user_token()
         else:
             print('-'*50)
             print("SAVE PROFILE OPERATION CANCELLED")
             print('-'*50)
             set_token()
-            get_user_token()
     
     except ValueError:
         print("VALUE ERROR—Do you have any parameters currently set?")
@@ -208,7 +207,6 @@ def load_profiles(): #callc the load_profile function and prints the output from
     print(f'# Photos per Cycle: {num_photos_per_cycle}')
     print()
     set_token()
-    get_user_token()
 
 def print_current_parameters():
     print("Current Parameters:")
@@ -218,24 +216,23 @@ def print_current_parameters():
     print(f"Delay Increment: {delay_increment}")
     print()
     set_token()
-    get_user_token()
-def get_user_token():
-    if token == 1: # (1) set_parameters
-        set_parameters()
+def execute_token(my_token):
+    if my_token == 1: # (1) set_parameters
+        max_delay_SDG, min_delay, num_photos_per_cycle, delay_increment = set_parameters()
         #collect_data(num_photos_per_cycle, delay_increment, min_delay, max_delay_SDG)
 
-    elif token == 2: # (2) BEGIN DATA COLLECTION
+    elif my_token == 2: # (2) BEGIN DATA COLLECTION
         begin_data_collection()
 
-    elif token == 3:  # (3) SAVE PROFILE
+    elif my_token == 3:  # (3) SAVE PROFILE
         save_profile(max_delay_SDG, min_delay, num_photos_per_cycle, delay_increment)
         
-    elif token == 4:  # (4) load profiles
+    elif my_token == 4:  # (4) load profiles
         load_profiles()
 
-    elif token == 5: # (5) Print Current Parameters
+    elif my_token == 5: # (5) Print Current Parameters
         print_current_parameters()
-    elif token > 5: # if user selects an invalid option
+    elif my_token > 5: # if user selects an invalid option
         set_token()
 
 ####################
@@ -253,7 +250,7 @@ min_delay = 10
 max_delay_SDG = 1000
 
 # get token—input from user
-print('-'*50, "MAIN MENU", '-'*50)
+"""print('-'*50, "MAIN MENU", '-'*50)
 print("(1) SET PARAMETERS")
 print("(2) BEGIN DATA COLLECTION")
 print("(3) SAVE PROFILE")
@@ -268,6 +265,6 @@ while True:
         break
     except ValueError:
         print(disappointed_dad_error_msg)
-        print()
-get_user_token()
+        print()"""
+set_token()
 
