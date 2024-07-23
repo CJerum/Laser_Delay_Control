@@ -1,5 +1,4 @@
 import numpy as np
-import PySimpleGUI as sg
 import json
 import os
 """ General Outline:
@@ -22,19 +21,17 @@ LOOPING
 disappointed_dad_error_msg = "You either can't type correctly or maybe you just can't read directions. I expected better from you and honestly, I'm disappointed in you. Try again"
 
 
-# arbitrary initial values
-num_tokens = 2 #adjust this manually to correspond with the number of commands available for the user to select
 
-#num_photos_per_cycle, delay_increment, min_delay, max_delay_SDG
-num_photos_per_cycle = 100
-delay_increment = 1
-min_delay = 10
-max_delay_SDG = 1000
 
-# FUNCTIONS
+
+
+#############
+# FUNCTIONS #
+#############
+ 
 def collect_data(num_photos_per_cycle, delay_increment, min_delay, max_delay_SDG):
 
-
+    """
     #SCRIPT TO DO EVERYTHING HERE
     #camera trigger
     #update photo number
@@ -48,7 +45,7 @@ def collect_data(num_photos_per_cycle, delay_increment, min_delay, max_delay_SDG
     event, values = window.read()
 
     return
-
+    """
 def load_profile():
     try:
         with open('profiles.txt', 'r') as file:
@@ -83,45 +80,6 @@ def load_profile():
         print("profiles.txt file not found.")
     except json.JSONDecodeError:
         print("Error decoding JSON from the file. Make sure the file is properly formatted.")
-
-def save_profile(max_delay_SDG, min_delay, num_photos_per_cycle, delay_increment):
-    try:
-        print("Current Parameters:")
-        print(f"Initial Delay of SDG2000x: {max_delay_SDG}")
-        print(f"Minimum Delay of SDG2000x: {min_delay}")
-        print(f"Number of Photos Per Cycle: {num_photos_per_cycle}")
-        print(f"Delay Increment: {delay_increment}")
-        
-        while True:
-            yn = input("Save This Profile? (y/n): ").lower()
-            if yn in ['y', 'yes', 'n', 'no']:
-                break
-            print("Invalid Input. Please enter 'y' or 'n'.")
-        
-        if yn in ['y', 'yes']:
-            profile_name = input("Enter desired profile name: ")
-            profile_data = {
-                "name": profile_name,
-                "data": [max_delay_SDG, min_delay, num_photos_per_cycle, delay_increment]
-            }
-            
-            # Convert the profile data to a JSON string
-            profile_json = json.dumps(profile_data)
-            
-            # Write the JSON string to a file
-            with open('profiles.txt', 'a') as file:
-                file.write(profile_json + '\n')  # Add a newline to separate entries
-            
-            print('-'*50)
-            print(f'PROFILE "{profile_name}" SUCCESSFULLY SAVED')
-            print('-'*50)
-        else:
-            print('-'*50)
-            print("SAVE PROFILE OPERATION CANCELLED")
-            print('-'*50)
-    
-    except ValueError:
-        print("VALUE ERROR—Do you have any parameters currently set?")
 # command line output to user upon intialization of code
 def set_token():
     print('-'*50, "MAIN MENU", '-'*50)
@@ -140,19 +98,10 @@ def set_token():
         except ValueError:
             print(disappointed_dad_error_msg)
             print()
+    get_user_token()
     return token
 
-print("Welcome to the 'Junction Activated Mechanism with Electronic Setup and Interface Support to Accomplish Completely Autonomous Triggering (JAMES IS A CAT)' program; Please follow the directions below.")
-print()
-print("Please select one of the following tokens by inputting the number it corresponds to:")
-print()
-print() #blank space
-
-# get token—input from user
-token = set_token()
-# actual commands
-if token == 1: # (1) collect_data
-    def collect_data():
+def set_parameters():
     while True:
         try:
             num_photos_per_cycle = int(input("Enter desired number of photos per cycle:"))
@@ -187,10 +136,9 @@ if token == 1: # (1) collect_data
     print('-'*50, "PARAMETERS SUCCESSFULLY INTIALIZED", '-'*50)
     print()
     set_token()
-    #collect_data(num_photos_per_cycle, delay_increment, min_delay, max_delay_SDG)
-    
+    get_user_token()
 
-elif token == 2: # (2) BEGIN DATA COLLECTION
+def begin_data_collection():
     #collect_data(num_photos_per_cycle, delay_increment, min_delay, max_delay_SDG)
     delay_array = np.linspace(min_delay, max_delay_SDG, delay_increment)
     total_photos = int(len(delay_array))
@@ -206,12 +154,52 @@ elif token == 2: # (2) BEGIN DATA COLLECTION
             print(disappointed_dad_error_msg) 
             print()
     set_token()
+    get_user_token()
 
-elif token == 3:  # (3) SAVE PROFILE
-    save_profile(max_delay_SDG, min_delay, num_photos_per_cycle, delay_increment)
-    set_token()
-elif token == 4:  # (4) load profiles
-def load_profiles():    
+def save_profile(max_delay_SDG, min_delay, num_photos_per_cycle, delay_increment):
+    try:
+        print("Current Parameters:")
+        print(f"Initial Delay of SDG2000x: {max_delay_SDG}")
+        print(f"Minimum Delay of SDG2000x: {min_delay}")
+        print(f"Number of Photos Per Cycle: {num_photos_per_cycle}")
+        print(f"Delay Increment: {delay_increment}")
+        
+        while True:
+            yn = input("Save This Profile? (y/n): ").lower()
+            if yn in ['y', 'yes', 'n', 'no']:
+                break
+            print("Invalid Input. Please enter 'y' or 'n'.")
+        
+        if yn in ['y', 'yes']:
+            profile_name = input("Enter desired profile name: ")
+            profile_data = {
+                "name": profile_name,
+                "data": [max_delay_SDG, min_delay, num_photos_per_cycle, delay_increment]
+            }
+            
+            # Convert the profile data to a JSON string
+            profile_json = json.dumps(profile_data)
+            
+            # Write the JSON string to a file
+            with open('profiles.txt', 'a') as file:
+                file.write(profile_json + '\n')  # Add a newline to separate entries
+            
+            print('-'*50)
+            print(f'PROFILE "{profile_name}" SUCCESSFULLY SAVED')
+            print('-'*50)
+            set_token()
+            get_user_token()
+        else:
+            print('-'*50)
+            print("SAVE PROFILE OPERATION CANCELLED")
+            print('-'*50)
+            set_token()
+            get_user_token()
+    
+    except ValueError:
+        print("VALUE ERROR—Do you have any parameters currently set?")
+
+def load_profiles(): #callc the load_profile function and prints the output from that   
     max_delay_SDG, min_delay, num_photos_per_cycle, delay_increment = load_profile()
     print('-'*50, "PROFILE SUCCESSFULLY LOADED", '-'*50)
     print(f'Max Delay: {max_delay_SDG}')
@@ -220,8 +208,9 @@ def load_profiles():
     print(f'# Photos per Cycle: {num_photos_per_cycle}')
     print()
     set_token()
+    get_user_token()
 
-elif token == 5: # (5) Print Current Parameters
+def print_current_parameters():
     print("Current Parameters:")
     print(f"Initial Delay of SDG2000x: {max_delay_SDG}")
     print(f"Minimum Delay of SDG2000x: {min_delay}")
@@ -229,4 +218,56 @@ elif token == 5: # (5) Print Current Parameters
     print(f"Delay Increment: {delay_increment}")
     print()
     set_token()
-#num_photos_per_cycle, delay_increment, min_delay, max_delay_SDG
+    get_user_token()
+def get_user_token():
+    if token == 1: # (1) set_parameters
+        set_parameters()
+        #collect_data(num_photos_per_cycle, delay_increment, min_delay, max_delay_SDG)
+
+    elif token == 2: # (2) BEGIN DATA COLLECTION
+        begin_data_collection()
+
+    elif token == 3:  # (3) SAVE PROFILE
+        save_profile(max_delay_SDG, min_delay, num_photos_per_cycle, delay_increment)
+        
+    elif token == 4:  # (4) load profiles
+        load_profiles()
+
+    elif token == 5: # (5) Print Current Parameters
+        print_current_parameters()
+    elif token > 5: # if user selects an invalid option
+        set_token()
+
+####################
+# ON INTIALIZATION #
+####################
+print("Welcome to the 'Junction Activated Mechanism with Electronic Setup and Interface Support to Accomplish Completely Autonomous Triggering (JAMES IS A CAT)' program; Please follow the directions below.")
+print()
+print("Please select one of the following tokens by inputting the number it corresponds to:")
+print()
+print() #blank space
+
+num_photos_per_cycle = 100
+delay_increment = 1
+min_delay = 10
+max_delay_SDG = 1000
+
+# get token—input from user
+print('-'*50, "MAIN MENU", '-'*50)
+print("(1) SET PARAMETERS")
+print("(2) BEGIN DATA COLLECTION")
+print("(3) SAVE PROFILE")
+print("(4) LOAD PROFILE")
+print("(5) PRINT CURRENT PARAMETERS")
+
+while True:
+    try:
+        token = int(input("Enter Token:"))
+        print("Valid token")
+        print()
+        break
+    except ValueError:
+        print(disappointed_dad_error_msg)
+        print()
+get_user_token()
+
